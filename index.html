@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Interactive Guide: Redshift Provisioned to Serverless Migration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+      .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px; /* Increased height for better visualization */
+            max-height: 500px;
+        }
+        @media (min-width: 768px) {
+          .chart-container {
+                height: 450px;
+            }
+        }
+      .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+      .nav-link.active {
+            color: #C05621; /* Rust accent */
+            border-bottom-color: #C05621;
+        }
+      .section-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+      .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+      .code-block {
+            background-color: #2D3748; /* Slate */
+            color: #E2E8F0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.875rem;
+        }
+      .executive-summary {
+            background-color: #E9E4DB; /* Light Beige */
+            border-left: 5px solid #C05621; /* Rust accent */
+        }
+      .ai-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+      .ai-slider {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-[#FDFBF7] text-[#36454F]">
+    <header class="bg-[#FDFBF7]/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-[#2A4365]">Redshift Migration Guide (2025 Edition)</span>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="ml-10 flex items-baseline space-x-3">
+                        <a href="#executive-summary" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Summary</a>
+                        <a href="#dashboard" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Compare</a>
+                        <a href="#modeler" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Modeler</a>
+                        <a href="#concepts" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Concepts</a>
+                        <a href="#ai-leverage" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">AI</a>
+                        <a href="#security" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Security</a>
+                        <a href="#analysis" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Analysis</a>
+                        <a href="#load-testing" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Testing</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-[#C05621] border-b-2 border-transparent">Roadmap</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section id="executive-summary" class="scroll-mt-20 mb-16 executive-summary p-6 rounded-lg">
+            <h1 class="text-3xl font-bold text-[#2A4365] mb-4">Executive Summary & Key Takeaways</h1>
+            <p class="text-gray-700 mb-3">
+                This guide recommends a **phased migration to Amazon Redshift Serverless** to modernize your data warehousing capabilities. This shift focuses on leveraging cloud-native elasticity and AI-driven optimizations to enhance agility and potentially reduce Total Cost of Ownership (TCO), especially for your variable workloads.
+            </p>
+            <h2 class="text-xl font-semibold text-[#2A4365] mb-2">Expected Key Benefits:</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-3">
+                <li><strong>Reduced Operational Overhead:</strong> Automates infrastructure management, allowing teams to focus on data insights.</li>
+                <li><strong>Cost Optimization for Variable Workloads:</strong> Pay-per-use model with auto-pause minimizes costs for intermittent or unpredictable query patterns.</li>
+                <li><strong>Enhanced Agility & Scalability:</strong> Dynamically scales resources to meet demand, supporting fluctuating analytical needs.</li>
+                <li><strong>Maintained/Improved Performance:</strong> AI-driven scaling and features like `statement_timeout` help meet performance SLAs, including critical report delivery.</li>
+            </ul>
+            <h2 class="text-xl font-semibold text-[#2A4365] mb-2">Key Considerations & Risks:</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <li><strong>RPU Configuration & Monitoring:</strong> Careful tuning of Base RPU, Max RPU-Hours, and AI scaling profiles is crucial for cost control and performance.</li>
+                <li><strong>Continuous Workloads:</strong> Services like Zero-ETL integrations may prevent auto-pause, potentially impacting cost benefits if not managed.</li>
+                <li><strong>Learning Curve:</strong> While simplified, understanding Serverless concepts and best practices is key for optimal outcomes.</li>
+            </ul>
+             <p class="text-sm text-gray-600 mt-4"><strong>Sustainability Note:</strong> The pay-per-use and auto-pause features of Redshift Serverless contribute to more sustainable cloud resource consumption by reducing energy use from idle compute resources.</p>
+        </section>
+
+        <section id="dashboard" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Provisioned vs. Serverless: At a Glance</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Understand the fundamental shifts when moving from Redshift Provisioned (RA3) to Serverless. This comparison highlights changes in management, cost, performance, and operational paradigms.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold text-center mb-4 text-[#2A4365]">Provisioned Cluster (RA3)</h2>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">⚙️</span>
+                            <div><strong class="font-semibold">Management:</strong> Manual. Node provisioning, capacity planning, WLM tuning, scaling. <br><em class="text-sm text-gray-500">Paradigm: Infrastructure-centric.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">💰</span>
+                            <div><strong class="font-semibold">Cost Model:</strong> Fixed. Hourly billing per active node. RI discounts available. <br><em class="text-sm text-gray-500">Paradigm: Capacity-based billing.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🏎️</span>
+                            <div><strong class="font-semibold">Performance:</strong> Predictable based on fixed capacity. Manual scaling events. <br><em class="text-sm text-gray-500">Paradigm: Statically allocated performance.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🎯</span>
+                            <div><strong class="font-semibold">Best For:</strong> Stable, high-utilization workloads; RI optimization.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold text-center mb-4 text-[#2A4365]">Redshift Serverless</h2>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🤖</span>
+                            <div><strong class="font-semibold">Management:</strong> Automated. AWS manages infrastructure. Leverages AI for scaling & optimization. Reduced operational overhead.<br><em class="text-sm text-gray-500">Paradigm: Consumption & outcome-centric.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">💸</span>
+                             <div><strong class="font-semibold">Cost Model:</strong> Pay-per-use (RPU-hours). Auto-pauses for idle compute.<br><em class="text-sm text-gray-500">Paradigm: Usage-based billing.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">⚡️</span>
+                            <div><strong class="font-semibold">Performance:</strong> Dynamic & Elastic. Auto-scales RPUs based on demand and AI-driven targets.<br><em class="text-sm text-gray-500">Paradigm: Dynamically allocated performance.</em></div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🎯</span>
+                            <div><strong class="font-semibold">Best For:</strong> Variable, unpredictable, or intermittent workloads; Dev/Test; Self-service analytics.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="modeler" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Interactive Workload Modeler</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Model your four distinct workloads in Redshift Serverless. Click a workload to see the recommended strategy, implementation details, and impact snapshot. This demonstrates how Serverless addresses specific needs, including your 30-second report timeout.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div id="workload-card-1" class="workload-card cursor-pointer bg-white p-6 rounded-lg border-2 border-transparent hover:border-[#C05621] transition-all duration-300 section-card">
+                    <h3 class="font-bold text-lg text-center">Workload 1</h3>
+                    <p class="text-sm text-center text-gray-500">Reports Group</p>
+                    <p class="text-sm text-center text-gray-500 mt-2">Constraint: Abort > 30s</p>
+                </div>
+                <div id="workload-card-2" class="workload-card cursor-pointer bg-white p-6 rounded-lg border-2 border-transparent hover:border-[#C05621] transition-all duration-300 section-card">
+                    <h3 class="font-bold text-lg text-center">Workload 2</h3>
+                    <p class="text-sm text-center text-gray-500">ETL / Batch</p>
+                    <p class="text-sm text-center text-gray-500 mt-2">Constraint: None</p>
+                </div>
+                <div id="workload-card-3" class="workload-card cursor-pointer bg-white p-6 rounded-lg border-2 border-transparent hover:border-[#C05621] transition-all duration-300 section-card">
+                    <h3 class="font-bold text-lg text-center">Workload 3</h3>
+                    <p class="text-sm text-center text-gray-500">Ad-hoc Analytics</p>
+                    <p class="text-sm text-center text-gray-500 mt-2">Constraint: None</p>
+                </div>
+                 <div id="workload-card-4" class="workload-card cursor-pointer bg-white p-6 rounded-lg border-2 border-transparent hover:border-[#C05621] transition-all duration-300 section-card">
+                    <h3 class="font-bold text-lg text-center">Workload 4</h3>
+                    <p class="text-sm text-center text-gray-500">Dashboard Refresh</p>
+                    <p class="text-sm text-center text-gray-500 mt-2">Constraint: None</p>
+                </div>
+            </div>
+            <div id="modeler-details" class="mt-8 bg-white p-8 rounded-lg border border-gray-200 min-h-[350px] flex items-center justify-center">
+                <p class="text-gray-500">Select a workload card above to see the recommended Serverless strategy.</p>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="concepts" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Core Concepts & WLM Mapping</h1>
+             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Understand Redshift Serverless: a fully managed data warehouse service that automatically provisions and scales compute resources. It simplifies analytics by abstracting infrastructure. This section details its architecture and maps WLM constructs.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div>
+                    <h2 class="text-2xl font-bold mb-6 text-[#2A4365]">Serverless Architecture Components</h2>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-semibold text-lg">Namespace</h3>
+                            <p class="text-gray-600 mt-1">Logical container for database objects (schemas, tables) and users. Defines the data environment.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-semibold text-lg">Workgroup</h3>
+                            <p class="text-gray-600 mt-1">Compute engine executing queries against a Namespace. Configured with RPUs (Base Capacity from 8-1024 RPUs), WLM rules, and network settings. Base Capacity ensures baseline performance and impacts cost.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-semibold text-lg">RPUs (Redshift Processing Units)</h3>
+                            <p class="text-gray-600 mt-1">Units of compute capacity (CPU + 16GB memory each). Serverless scales RPUs automatically or via AI-driven price-performance targets.</p>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-semibold text-lg">AI-Driven Scaling & Optimization</h3>
+                            <p class="text-gray-600 mt-1">Core feature allowing users to set price-performance targets. Redshift Serverless intelligently manages RPU scaling and applies optimizations to meet these targets.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold mb-6 text-[#2A4365]">WLM Construct Mapping</h2>
+                     <div class="bg-white p-6 rounded-lg border border-gray-200 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provisioned Construct</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serverless Equivalent</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key Implication</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 text-sm font-medium text-gray-900">WLM Queues</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Logical queues via <strong>Query Groups</strong> in Workgroup WLM.</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Focus on query routing & concurrency per group.</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 text-sm font-medium text-gray-900">QMR - Execution Time</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500"><code>statement_timeout</code> (user/session).</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Direct, granular control; not queue-level for this action.</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 text-sm font-medium text-gray-900">Memory Allocation %</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Abstracted; part of dynamic RPU allocation.</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Simplified resource management.</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 text-sm font-medium text-gray-900">User Groups (Database)</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Database <code>ROLE</code>s.</td>
+                                    <td class="px-4 py-4 text-sm text-gray-500">Modern, more secure permission management.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="ai-leverage" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Leveraging AI in Redshift Serverless</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Redshift Serverless deeply integrates AI to simplify operations, optimize performance, and enhance user productivity. Understanding these capabilities is key to maximizing value in 2025.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold mb-3 text-[#2A4365]">AI-Driven Scaling & Optimization</h2>
+                    <p class="text-gray-600 mb-2">Instead of just reacting to queue times, Serverless uses AI to consider query complexity, data volume, and historical patterns to proactively scale RPUs.</p>
+                    <p class="text-gray-600 mb-2"><strong>Benefit:</strong> Achieves your desired price-performance targets (from "Optimized for Cost" to "Optimized for Performance") with less manual tuning.</p>
+                    <p class="text-gray-600"><strong>Executive Angle:</strong> "AI intelligently manages our data warehouse resources, ensuring we meet performance goals efficiently and cost-effectively, adapting to our unique workload patterns."</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold mb-3 text-[#2A4365]">Amazon Q Generative SQL</h2>
+                    <p class="text-gray-600 mb-2">Amazon Q in Redshift Query Editor v2 allows users to ask questions in natural language, which are then converted into SQL queries.</p>
+                    <p class="text-gray-600 mb-2"><strong>Benefit:</strong> Democratizes data access for less technical users, accelerates data exploration, and can suggest query optimizations.</p>
+                    <p class="text-gray-600"><strong>Executive Angle:</strong> "Our teams can get insights faster. AI helps bridge the gap between business questions and data, empowering more users to leverage analytics without deep SQL expertise."</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="security" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Security & Governance Overview</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Redshift Serverless integrates with AWS's robust security and governance framework, ensuring your data is protected and usage is controlled.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold mb-3 text-[#2A4365]">Data Protection</h2>
+                    <p class="text-gray-600 mb-2"><strong>Encryption:</strong> Data is encrypted at rest (using AWS KMS) and in transit (SSL).</p>
+                    <p class="text-gray-600"><strong>Network Isolation:</strong> Deploys within your Virtual Private Cloud (VPC) for network security.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold mb-3 text-[#2A4365]">Access Control</h2>
+                    <p class="text-gray-600 mb-2"><strong>IAM Integration:</strong> Leverages AWS Identity and Access Management (IAM) for authentication and authorization to the service.</p>
+                    <p class="text-gray-600"><strong>Database Roles:</strong> Granular in-database permissions managed via SQL <code>ROLE</code>s.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h2 class="text-2xl font-bold mb-3 text-[#2A4365]">Governance & Monitoring</h2>
+                    <p class="text-gray-600 mb-2"><strong>Usage Limits:</strong> Set Max RPU-Hours (daily, weekly, monthly) to control costs and trigger actions (log, alert, disable queries).</p>
+                    <p class="text-gray-600"><strong>Audit Logging:</strong> Track user activity and database changes for compliance.</p>
+                </div>
+            </div>
+             <p class="text-center text-sm text-gray-500 mt-8"><strong>Executive Angle:</strong> "Serverless maintains our strong security posture through comprehensive encryption, network isolation, and fine-grained access controls, while providing tools for robust governance and cost management."</p>
+        </section>
+        
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="analysis" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Cost & Price/Performance Analysis (Conceptual)</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Visualize potential cost and performance trade-offs. This model compares Provisioned (RA3) with Serverless across different workload types and AI optimization profiles. Remember, actuals depend on precise configurations.
+            </p>
+            <div class="bg-white p-6 rounded-lg border border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="workloadType" class="block text-sm font-medium text-gray-700">Select Workload Type:</label>
+                        <select id="workloadType" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#C05621] focus:border-[#C05621] sm:text-sm">
+                            <option value="stable">Stable Workload (e.g., Continuous ETL)</option>
+                            <option value="variable" selected>Variable Workload (e.g., Daily BI Reporting)</option>
+                            <option value="intermittent">Intermittent Workload (e.g., Ad-hoc Dev/Test)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="aiProfile" class="block text-sm font-medium text-gray-700">Serverless AI Price-Performance Target:</label>
+                        <div class="ai-slider-container">
+                            <span class="text-xs text-gray-500">Cost Opt.</span>
+                            <input type="range" id="aiProfile" min="1" max="5" value="3" class="ai-slider w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <span class="text-xs text-gray-500">Perf. Opt.</span>
+                        </div>
+                        <p id="aiProfileLabel" class="text-xs text-center text-gray-500 mt-1">Balanced</p>
+                    </div>
+                </div>
+                 <div class="mb-4">
+                    <label for="baseRPU" class="block text-sm font-medium text-gray-700">Assumed Serverless Base RPU (for Stable Workload): <span id="baseRPUValue">64</span> RPUs</label>
+                    <input type="range" id="baseRPU" min="8" max="256" step="8" value="64" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div class="chart-container">
+                    <canvas id="costPerformanceChart"></canvas>
+                </div>
+                 <p class="text-center text-sm text-gray-500 mt-4">This is a conceptual model. Actuals depend on query efficiency, data volume, region, and precise RPU/node configurations. Use AWS Pricing Calculator for detailed estimates. Auto-pause in Serverless significantly benefits intermittent workloads. Continuous processes (e.g., some Zero-ETL) may negate auto-pause.</p>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+        
+        <section id="load-testing" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Load Testing Strategy for Reports</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Rigorous load testing of your "Reports Group" workload on Serverless is vital. This validates performance, concurrency, and cost under realistic conditions, ensuring your 30-second SLA is met. Establish a baseline on your current RA3 setup for comparison.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">🎯</span>Define Objectives & KPIs</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li>Max concurrent report queries < 30s</li>
+                        <li>Throughput (Reports Per Minute/Hour)</li>
+                        <li>P95 & P99 query latency</li>
+                        <li>RPU consumption & cost at peak load (Target: <img src="https://placehold.co/20x20/C05621/FFFFFF?text=G" alt="gauge" class="inline h-5 w-5 rounded-full"> within budget)</li>
+                        <li>DB connection success/failure rate</li>
+                        <li>Successful `statement_timeout` enforcement</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">🛠️</span>Prepare Test Environment</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li>Dedicated Serverless workgroup for testing.</li>
+                        <li>Restore recent, realistic production data snapshot.</li>
+                        <li>Load testing tool (e.g., JMeter, k6, custom scripts using Redshift Data API).</li>
+                         <li>Scripts must set `query_group='reports_critical_short'` & `SET statement_timeout TO 30000;`.</li>
+                         <li>Simulate realistic query concurrency from peak hours.</li>
+                    </ul>
+                </div>
+                 <div class="bg-white p-6 rounded-lg border border-gray-200 section-card">
+                    <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-3">📈</span>Design & Execute Scenarios</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li><strong>Concurrency Test:</strong> Ramp up virtual users, monitor KPIs.</li>
+                        <li><strong>Soak Test:</strong> Sustained moderate load (e.g., 1-2 hours).</li>
+                        <li><strong>Stress Test:</strong> Push beyond expected peak to find limits.</li>
+                        <li><strong>Spike Test:</strong> Sudden bursts of traffic.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="mt-8 bg-white p-8 rounded-lg border border-gray-200">
+                <h3 class="text-xl font-bold text-[#2A4365] mb-4">Analyze Results & Tune (Iterative Process)</h3>
+                <p class="text-gray-600 mb-4">Correlate client-side metrics with server-side Redshift system views. This is key for optimizing Base RPU, WLM concurrency for the 'reports_critical_short' query group, and the AI-driven scaling profile.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="code-block">-- Query Performance during Test Window (sys_query_history)\nSELECT \n    query_group, status, COUNT(*) AS query_count,\n    AVG(total_elapsed_time / 1000000.0) AS avg_runtime_s,\n    MAX(total_elapsed_time / 1000000.0) AS max_runtime_s,\n    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY total_elapsed_time) / 1000000.0 AS p95_runtime_s\nFROM sys_query_history\nWHERE query_group = 'reports_critical_short'\n  AND start_time BETWEEN 'YYYY-MM-DD HH:MI:SS' AND 'YYYY-MM-DD HH:MI:SS'\nGROUP BY 1, 2 ORDER BY 1, 2;</div>
+                    <div class="code-block">-- RPU Consumption during Test Window (sys_serverless_usage)\nSELECT \n    DATE_TRUNC('hour', start_time) as usage_hour,\n    SUM(compute_seconds) / 3600.0 AS total_rpu_hours\nFROM sys_serverless_usage\nWHERE start_time BETWEEN 'YYYY-MM-DD HH:MI:SS' AND 'YYYY-MM-DD HH:MI:SS'\nGROUP BY 1 ORDER BY 1;</div>
+                </div>
+                <p class="mt-4 text-gray-600"><strong>Executive Angle:</strong> "Our load testing will de-risk the migration by ensuring critical reports meet performance SLAs and cost targets on Serverless under real-world pressure, allowing for data-driven configuration choices."</p>
+            </div>
+        </section>
+
+        <hr class="my-16 border-t border-gray-200">
+
+        <section id="roadmap" class="scroll-mt-20">
+            <h1 class="text-4xl font-bold text-center text-[#2A4365] mb-4">Phased Migration Roadmap</h1>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                A structured, phased approach minimizes risk and ensures a smooth transition to Redshift Serverless. This roadmap outlines key stages for a successful migration.
+            </p>
+            <div class="relative">
+                <div class="absolute left-1/2 -ml-px h-full w-0.5 bg-gray-300" style="top: 2rem; height: calc(100% - 4rem);"></div>
+                <div class="space-y-12">
+                    <div class="relative flex items-center justify-between roadmap-step" data-step="0">
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card text-right">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">🔍</span>Discovery & Baselining</h3>
+                            <p class="text-sm text-gray-600">Analyze current RA3 workload patterns, performance metrics (QPS, latency), and costs. Establish clear baselines for comparison.</p>
+                            </div>
+                        <div class="z-10 bg-[#C05621] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">0</div>
+                        <div class="w-2/5"></div>
+                    </div>
+                     <div class="relative flex items-center justify-between roadmap-step" data-step="1">
+                        <div class="w-2/5"></div>
+                        <div class="z-10 bg-[#2A4365] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">1</div>
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">⚙️</span>Plan & Configure Serverless</h3>
+                            <p class="text-sm text-gray-600">Define database <code>ROLE</code>s. Create Namespace & Workgroup. Set initial Base/Max RPU, AI Profile, and cost limits (Max RPU-Hours).</p>
+                            </div>
+                    </div>
+                     <div class="relative flex items-center justify-between roadmap-step" data-step="2">
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card text-right">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">🔄</span>Migrate or Share Data</h3>
+                            <p class="text-sm text-gray-600">Use Snapshot & Restore for cutover, or Data Sharing for testing with live RA3 data. Consider lake house integration with Redshift Spectrum for S3 data.</p>
+                            </div>
+                        <div class="z-10 bg-[#2A4365] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">2</div>
+                        <div class="w-2/5"></div>
+                    </div>
+                     <div class="relative flex items-center justify-between roadmap-step" data-step="3">
+                        <div class="w-2/5"></div>
+                        <div class="z-10 bg-[#2A4365] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">3</div>
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">🚦</span>Implement WLM & Controls</h3>
+                            <p class="text-sm text-gray-600">Apply <code>statement_timeout=30000</code> for Reports Group (session-level). Configure clients to set <code>query_group</code> labels for all workloads.</p>
+                            </div>
+                    </div>
+                     <div class="relative flex items-center justify-between roadmap-step" data-step="4">
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card text-right">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">🧪</span>Test, Validate & Load Test</h3>
+                            <p class="text-sm text-gray-600">Run baseline queries. Execute comprehensive load tests for Reports Group (see Load Testing section). Compare performance/cost vs. RA3. Validate WLM rules.</p>
+                            </div>
+                        <div class="z-10 bg-[#2A4365] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">4</div>
+                        <div class="w-2/5"></div>
+                    </div>
+                     <div class="relative flex items-center justify-between roadmap-step" data-step="5">
+                        <div class="w-2/5"></div>
+                        <div class="z-10 bg-[#2A4365] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">5</div>
+                        <div class="w-2/5 bg-white p-6 rounded-lg border border-gray-200 section-card">
+                            <h3 class="font-bold text-lg"><span class="text-2xl mr-2">🛠️</span>Monitor, Optimize & Cutover</h3>
+                            <p class="text-sm text-gray-600">Continuously monitor CloudWatch metrics & Redshift system views (<code>sys_query_history</code>, <code>sys_serverless_usage</code>). Tune RPU settings, AI profiles, query efficiency. Plan and execute final cutover.</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+             <p class="text-center text-sm text-gray-500 mt-8"><strong>Executive Angle:</strong> "Our migration is a carefully planned, multi-stage process focused on minimizing risk and maximizing value. Each step includes validation and optimization to ensure a seamless transition and achievement of our performance and cost objectives."</p>
+        </section>
+
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const workloadDetails = {
+                'workload-card-1': {
+                    title: 'Strategy for Reports Group (Workload 1)',
+                    description: 'Replicate the 30s execution limit using <code>statement_timeout</code>. This is simpler and more direct than programmatic cancellation (Lambda), which adds complexity and potential latency.',
+                    recommendation: 'Apply <code>statement_timeout</code> at the <strong>session level</strong> in reporting tools. This targets only report queries, allowing users to run longer ad-hoc queries if needed.',
+                    code: `// SQL: Set by client before report query\nSET statement_timeout TO 30000; -- 30s\n\n--... execute report query...\n\nRESET statement_timeout;`,
+                    impact: { complexity: 'Low', rpu_pattern: 'Short bursts', benefit: 'Fine-grained timeout control' }
+                },
+                'workload-card-2': {
+                    title: 'Strategy for ETL / Batch (Workload 2)',
+                    description: 'Manage via a dedicated <code>query_group</code>. Serverless WLM and AI-driven scaling will manage resources.',
+                    recommendation: 'Assign an "etl_main_batch" <code>query_group</code>. Configure its WLM queue with medium-high concurrency in the Workgroup settings.',
+                    code: `// SQL: Set by ETL tool\nSET query_group TO 'etl_main_batch';\n\n--... execute ETL queries...\n\nRESET query_group;`,
+                    impact: { complexity: 'Medium (client change)', rpu_pattern: 'Sustained during runs', benefit: 'WLM Queuing & Auto-Scaling' }
+                },
+                'workload-card-3': {
+                    title: 'Strategy for Ad-hoc Analytics (Workload 3)',
+                    description: 'Isolate via a <code>query_group</code> to manage unpredictable resource use. Serverless WLM and AI-driven scaling will adapt.',
+                    recommendation: 'Use an "adhoc_analytics" <code>query_group</code>. Set moderate WLM concurrency to ensure fair sharing.',
+                    code: `// SQL: Set by BI/SQL tool\nSET query_group TO 'adhoc_analyst_queries';\n\n--... execute ad-hoc query...\n\nRESET query_group;`,
+                    impact: { complexity: 'Medium (client change)', rpu_pattern: 'Variable, unpredictable', benefit: 'WLM Queuing & Auto-Scaling' }
+                },
+                'workload-card-4': {
+                    title: 'Strategy for Dashboard Refresh (Workload 4)',
+                    description: 'Manage with a dedicated <code>query_group</code> for predictable, frequent queries. Serverless WLM and AI-driven scaling manage resources.',
+                    recommendation: 'Define a "dashboard_refresh" <code>query_group</code>. Set appropriate WLM concurrency and medium priority.',
+                    code: `// SQL: Set by dashboard service\nSET query_group TO 'dashboards_hourly_refresh';\n\n--... execute dashboard queries...\n\nRESET query_group;`,
+                    impact: { complexity: 'Medium (client change)', rpu_pattern: 'Regular, moderate bursts', benefit: 'WLM Queuing & Auto-Scaling' }
+                }
+            };
+
+            const workloadCards = document.querySelectorAll('.workload-card');
+            const detailsContainer = document.getElementById('modeler-details');
+
+            workloadCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    workloadCards.forEach(c => c.classList.remove('border-[#C05621]')); // Rust
+                    card.classList.add('border-[#C05621]');
+                    
+                    const details = workloadDetails[card.id];
+                    detailsContainer.innerHTML = `
+                        <div class="w-full">
+                            <h3 class="text-2xl font-bold text-[#2A4365] mb-2">${details.title}</h3>
+                            <p class="text-gray-600 mb-4">${details.description}</p>
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold text-lg">Recommendation:</h4>
+                                <p class="text-gray-700 mt-1">${details.recommendation}</p>
+                                <h4 class="font-semibold text-lg mt-4">Example Implementation:</h4>
+                                <div class="code-block mt-2">${details.code}</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-lg">Impact Snapshot:</h4>
+                                <ul class="list-disc list-inside text-gray-700 mt-1">
+                                    <li><strong>Complexity:</strong> ${details.impact.complexity}</li>
+                                    <li><strong>RPU Pattern:</strong> ${details.impact.rpu_pattern}</li>
+                                    <li><strong>Key Serverless Benefit:</strong> ${details.impact.benefit}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            
+            // Cost & Performance Chart Logic
+            let costPerformanceChart;
+            const ctx = document.getElementById('costPerformanceChart').getContext('2d');
+            const workloadTypeSelect = document.getElementById('workloadType');
+            const aiProfileSlider = document.getElementById('aiProfile');
+            const aiProfileLabel = document.getElementById('aiProfileLabel');
+            const baseRPUSlider = document.getElementById('baseRPU');
+            const baseRPUValueSpan = document.getElementById('baseRPUValue');
+
+            const aiProfileNames = ['Cost Optimized', 'High Cost Opt.', 'Balanced', 'High Perf. Opt.', 'Performance Optimized'];
+
+            function updateAIProfileLabel() {
+                aiProfileLabel.textContent = aiProfileNames[aiProfileSlider.value - 1];
+            }
+            
+            function updateBaseRPUValue() {
+                baseRPUValueSpan.textContent = baseRPUSlider.value;
+            }
+
+            function getConceptualPerformance(workloadType, aiProfileValue) {
+                let basePerf = 0;
+                if (workloadType === 'stable') basePerf = 90; 
+                if (workloadType === 'variable') basePerf = 110;
+                if (workloadType === 'intermittent') basePerf = 120;
+                const perfAdjustment = (aiProfileValue - 3) * 10; 
+                return Math.max(50, Math.min(150, basePerf + perfAdjustment));
+            }
+
+            function getConceptualCost(workloadType, aiProfileValue, serverlessBaseRPU) {
+                let provisionedCost = 100; 
+                let serverlessCost = 100;
+
+                if (workloadType === 'stable') {
+                    provisionedCost = 70; 
+                    serverlessCost = 60 + (serverlessBaseRPU / 8) * 2.5; 
+                    serverlessCost -= (aiProfileValue - 3) * 5; 
+                } else if (workloadType === 'variable') {
+                    provisionedCost = 100; 
+                    serverlessCost = 75 - (aiProfileValue - 3) * 10;
+                } else if (workloadType === 'intermittent') {
+                    provisionedCost = 100; 
+                    serverlessCost = 40 - (aiProfileValue - 3) * 8; 
+                }
+                return {
+                    provisioned: Math.max(30, Math.min(150, provisionedCost)),
+                    serverless: Math.max(20, Math.min(180, serverlessCost))
+                };
+            }
+            
+            function renderCostPerformanceChart() {
+                const workloadType = workloadTypeSelect.value;
+                const aiProfileValue = parseInt(aiProfileSlider.value);
+                const serverlessBaseRPU = parseInt(baseRPUSlider.value);
+
+                const costs = getConceptualCost(workloadType, aiProfileValue, serverlessBaseRPU);
+                const serverlessPerf = getConceptualPerformance(workloadType, aiProfileValue);
+                const provisionedPerf = (workloadType === 'stable') ? 110 : 100; 
+
+                if (costPerformanceChart) {
+                    costPerformanceChart.destroy();
+                }
+                costPerformanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Provisioned', 'Serverless'],
+                        datasets: [
+                            {
+                                label: 'Normalized Cost Index (Lower is Better)',
+                                data: [costs.provisioned, costs.serverless],
+                                backgroundColor: ['#2A4365', '#4A5568'], 
+                                yAxisID: 'yCost',
+                            },
+                            {
+                                label: 'Relative Performance Index (Higher is Better)',
+                                data: [provisionedPerf, serverlessPerf],
+                                backgroundColor: ['#D69E2E', '#C05621'], 
+                                yAxisID: 'yPerformance',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Conceptual Price/Performance: ${workloadType.charAt(0).toUpperCase() + workloadType.slice(1)} Workload`,
+                                font: { size: 16 }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: false,
+                            },
+                            yCost: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Normalized Cost Index'
+                                },
+                                beginAtZero: true,
+                                suggestedMax: 150
+                            },
+                            yPerformance: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Relative Performance Index'
+                                },
+                                grid: {
+                                    drawOnChartArea: false, 
+                                },
+                                beginAtZero: true,
+                                suggestedMax: 150
+                            }
+                        }
+                    }
+                });
+            }
+
+            workloadTypeSelect.addEventListener('change', renderCostPerformanceChart);
+            aiProfileSlider.addEventListener('input', () => {
+                updateAIProfileLabel();
+                renderCostPerformanceChart();
+            });
+            baseRPUSlider.addEventListener('input', () => {
+                updateBaseRPUValue();
+                if (workloadTypeSelect.value === 'stable') { 
+                    renderCostPerformanceChart();
+                }
+            });
+            
+            updateAIProfileLabel(); 
+            updateBaseRPUValue(); 
+            renderCostPerformanceChart(); 
+
+            // Smooth scrolling and active nav link
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.3 
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
